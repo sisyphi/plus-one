@@ -1,33 +1,54 @@
 <script lang="ts">
 	import AnswerList from '$lib/components/AnswerList.svelte';
-	import { isOneLetterApart, isWordValid, loadFile, randElement, type WordData } from '$lib/helper';
+	import { type WordData } from '$lib/helper';
 	import { onMount } from 'svelte';
 
 	let wordData: WordData = $state([]);
-	let startingWords: string[] = [];
+	let startingWord: string = $state('');
 	let guess: string = $state('');
 	let answers: string[] = $state([]);
 	let guessInputEl: HTMLInputElement;
 
-	function handleWordSubmit(answers: string[], word: string): void {
-		if (answers.length > 0) {
-			if (answers[answers.length - 1].length + 1 !== word.length) return;
-			if (!isOneLetterApart(answers[answers.length - 1], word)) return;
-		}
+	async function handleWordSubmit(guess: string, prevAnswer: string): Promise<void> {
+		const { valid, reason } = await validateGuess(guess, prevAnswer);
 
-		if (!isWordValid(word, wordData)) return;
-
-		answers.push(word.toLowerCase());
+		if (valid) answers.push(guess.toLowerCase());
 	}
 
 	function handleDeleteAnswer(answers: any[], idx: number): void {
 		answers.splice(idx);
 	}
 
+	async function fetchStartingWord(): Promise<string> {
+		const res = await fetch('/api/starting-word');
+		const { data } = await res.json();
+		return data;
+	}
+
+	async function validateGuess(
+		guess: string,
+		prevAnswer: string
+	): Promise<{ valid: boolean; reason: string }> {
+		const res = await fetch('/api/validate-guess', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ guess, prevAnswer })
+		});
+		const data = await res.json();
+		return data;
+	}
+
+	async function handleReset(): Promise<void> {
+		answers = [];
+		const startingWord = await fetchStartingWord();
+		answers.push(startingWord);
+		guess = '';
+		guessInputEl.focus();
+	}
+
 	onMount(async () => {
-		wordData = await loadFile('plus_one', 'json');
-		startingWords = await loadFile('1000_4_letter_words', 'txt');
-		answers.push(randElement(startingWords));
+		startingWord = await fetchStartingWord();
+		answers.push(startingWord);
 		guessInputEl.focus();
 	});
 </script>
@@ -36,10 +57,12 @@
 	<form
 		class="flex w-full flex-col items-center justify-center gap-2"
 		onsubmit={(e) => {
-			e.preventDefault();
-			handleWordSubmit(answers, guess);
-			guess = '';
-			guessInputEl.focus();
+			if (answers.length) {
+				e.preventDefault();
+				handleWordSubmit(guess.toLowerCase(), answers[answers.length - 1]);
+				guess = '';
+				guessInputEl.focus();
+			}
 		}}
 		autocomplete="off"
 	>
@@ -50,19 +73,8 @@
 			bind:value={guess}
 			bind:this={guessInputEl}
 		/>
-		<div>{isWordValid(guess, wordData) ? 'is a valid word' : 'is not a valid word'}</div>
 	</form>
-	<button
-		class="border px-2 py-0.5 hover:cursor-pointer"
-		onclick={() => {
-			answers = [];
-			answers.push(randElement(startingWords));
-			guess = '';
-			guessInputEl.focus();
-		}}
-	>
-		reset
-	</button>
+	<button class="border px-2 py-0.5 hover:cursor-pointer" onclick={handleReset}> reset </button>
 	<!-- UI: Guess len vs. Last answer len -->
 	{#if answers.length}
 		<div class="flex flex-row items-center justify-between gap-4">

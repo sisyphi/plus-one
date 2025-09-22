@@ -42,7 +42,7 @@ export function isWordValid(word: string, wordData: WordData): boolean {
 	return wordList.includes(word);
 }
 
-export async function loadFile(filename: string, ext: string) {
+export async function loadFile(filename: string, ext: string): Promise<any> {
 	const res = await fetch(`/data/${filename}.${ext}`);
 	switch (ext) {
 		case 'json':
