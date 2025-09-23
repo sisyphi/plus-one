@@ -69,7 +69,7 @@
 		<input
 			name="starting-word"
 			placeholder="Enter starting word"
-			class="w-full caret-transparent placeholder:text-center"
+			class="w-full placeholder:text-center"
 			bind:value={guess}
 			bind:this={guessInputEl}
 		/>
