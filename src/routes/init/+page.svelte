@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { loadFile } from '$lib/helper';
+	import { Graph } from '$lib/datatypes/Graph';
+	import { loadFile, wordToSignature } from '$lib/helper';
 	import { onMount } from 'svelte';
+	import { fromAction } from 'svelte/attachments';
 	let words: string[] = [];
 	let dataMap: Map<number, Map<string, string[]>> = new Map();
 	let startingWords: string[] = [];
@@ -31,6 +33,18 @@
 		URL.revokeObjectURL(url);
 	}
 
+	function downloadJsonStrAsJson(json: string) {
+		const blob = new Blob([json], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'plus_one.json';
+		a.click();
+
+		URL.revokeObjectURL(url);
+	}
+
 	function downloadMapAsText(d: string[]) {
 		const content = d.join('\n');
 
@@ -50,7 +64,7 @@
 		let dataMap: Map<number, Map<string, string[]>> = new Map();
 
 		for (let word of words) {
-			const key: string = word.split('').sort().join('');
+			const key: string = wordToSignature(word);
 			const keyLen = key.length;
 
 			let keyLenMap = dataMap.get(keyLen);
@@ -69,6 +83,35 @@
 		return dataMap;
 	}
 
+	function createGraph(words: string[]): Graph<string[]> {
+		const graph = new Graph<string[]>();
+		for (let word of words) {
+			const sig = wordToSignature(word);
+			let vertexData = graph.getVertexData(sig);
+			if (!vertexData) {
+				graph.addVertex(sig, [word]);
+			} else {
+				graph.updateVertex(sig, [word, ...vertexData].toSorted());
+			}
+		}
+		graph.printVertexData();
+
+		const vertexIds = graph.getVertexIds();
+		for (let vertexId of vertexIds) {
+			const to = vertexId;
+			for (let i = 0; i < vertexId.length; i++) {
+				const from = vertexId.slice(0, i) + vertexId.slice(i + 1);
+
+				if (!graph.getVertexData(from)) {
+					continue;
+				}
+
+				graph.addEdge(from, to);
+			}
+		}
+		return graph;
+	}
+
 	function shuffleArray<T>(array: T[]): T[] {
 		const arr = [...array];
 		for (let i = arr.length - 1; i > 0; i--) {
@@ -80,7 +123,7 @@
 
 	onMount(async () => {
 		words = await loadFile('words_alpha', 'txt');
-		words = words.sort();
+		words = words.toSorted();
 
 		dataMap = createDataMap(words);
 		startingWords = shuffleArray(words.filter((w) => w.length === 4));
@@ -99,5 +142,11 @@
 		onclick={() => downloadMapAsText(startingWords)}
 	>
 		Download starting words
+	</button>
+	<button
+		class="border-2 border-black p-2 hover:cursor-pointer"
+		onclick={() => downloadJsonStrAsJson(createGraph(words).toJSON())}
+	>
+		Download graph
 	</button>
 </div>

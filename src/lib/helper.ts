@@ -9,8 +9,8 @@ export function isOneLetterApart(wordA: string, wordB: string): boolean {
 		[wordA, wordB] = [wordB, wordA];
 	}
 
-	const lettersA = wordA.split('').sort();
-	const lettersB = wordB.split('').sort();
+	const lettersA = wordA.split('').toSorted();
+	const lettersB = wordB.split('').toSorted();
 
 	if (lettersB.length - lettersA.length !== 1) return false;
 
@@ -37,7 +37,7 @@ export function isWordValid(word: string, wordData: WordData): boolean {
 	word = word.toLowerCase();
 	const keyMap = wordData[word.length];
 	if (!keyMap) return false;
-	const wordList = keyMap[wordToKey(word)];
+	const wordList = keyMap[wordToSignature(word)];
 	if (!wordList) return false;
 	return wordList.includes(word);
 }
@@ -57,6 +57,6 @@ export function randElement<T>(arr: T[]): T {
 	return arr[idx];
 }
 
-function wordToKey(word: string): string {
-	return word.split('').sort().join('');
+export function wordToSignature(word: string): string {
+	return word.split('').toSorted().join('');
 }
