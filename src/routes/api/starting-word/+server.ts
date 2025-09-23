@@ -1,4 +1,4 @@
-import startingWordsTxt from '$lib/data/1000_4_letter_words.txt?raw';
+import startingWordsTxt from '$lib/data/starting_words.txt?raw';
 import { randElement } from '$lib/helper';
 import type { RequestHandler } from '@sveltejs/kit';
 

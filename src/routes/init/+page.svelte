@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Graph } from '$lib/datatypes/Graph';
+	import { Graph, type VertexId } from '$lib/datatypes/Graph';
 	import { loadFile, wordToSignature } from '$lib/helper';
 	import { onMount } from 'svelte';
 	import { fromAction } from 'svelte/attachments';
 	let words: string[] = [];
 	let dataMap: Map<number, Map<string, string[]>> = new Map();
 	let startingWords: string[] = [];
+	let graph: Graph<string[]>;
 
 	function mapToJson(map: Map<any, any>): any {
 		const obj: Record<string, any> = {};
@@ -33,13 +34,13 @@
 		URL.revokeObjectURL(url);
 	}
 
-	function downloadJsonStrAsJson(json: string) {
+	function downloadJsonStrAsJson(json: string, filename: string) {
 		const blob = new Blob([json], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'plus_one.json';
+		a.download = filename + '.json';
 		a.click();
 
 		URL.revokeObjectURL(url);
@@ -94,7 +95,6 @@
 				graph.updateVertex(sig, [word, ...vertexData].toSorted());
 			}
 		}
-		graph.printVertexData();
 
 		const vertexIds = graph.getVertexIds();
 		for (let vertexId of vertexIds) {
@@ -127,6 +127,8 @@
 
 		dataMap = createDataMap(words);
 		startingWords = shuffleArray(words.filter((w) => w.length === 4));
+
+		graph = createGraph(words);
 	});
 </script>
 
@@ -145,7 +147,7 @@
 	</button>
 	<button
 		class="border-2 border-black p-2 hover:cursor-pointer"
-		onclick={() => downloadJsonStrAsJson(createGraph(words).toJSON())}
+		onclick={() => console.log(downloadJsonStrAsJson(graph.getSubgraph('').toJSON(), 'nil_graph'))}
 	>
 		Download graph
 	</button>

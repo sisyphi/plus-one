@@ -1,13 +1,8 @@
 export type VertexId = string;
 
 export class Graph<T> {
-	private vertexData: Map<VertexId, T>;
-	private adjacencyList: Map<VertexId, Set<VertexId>>;
-
-	constructor() {
-		this.vertexData = new Map();
-		this.adjacencyList = new Map();
-	}
+	private vertexData = new Map<VertexId, T>();
+	private adjacencyList = new Map<VertexId, Set<VertexId>>();
 
 	addVertex(id: VertexId, data: T): void {
 		if (this.vertexData.has(id)) {
@@ -20,7 +15,7 @@ export class Graph<T> {
 
 	updateVertex(id: VertexId, data: T): void {
 		if (!this.vertexData.has(id)) {
-			throw new Error(`Vertex ${id} doesn't exist.`);
+			throw new Error(`Vertex ${id} does not exist.`);
 		}
 
 		this.vertexData.set(id, data);
@@ -38,7 +33,7 @@ export class Graph<T> {
 	}
 
 	getVertexIds(): string[] {
-		return Array.from(this.vertexData.keys());
+		return [...this.vertexData.keys()];
 	}
 
 	getVertexData(id: VertexId): T | undefined {
@@ -46,12 +41,51 @@ export class Graph<T> {
 	}
 
 	getNeighbors(id: VertexId): VertexId[] {
-		return Array.from(this.adjacencyList.get(id) || []);
+		return [...(this.adjacencyList.get(id) || [])];
+	}
+
+	getSubgraph(start: VertexId): Graph<T> {
+		if (!this.vertexData.has(start) || !this.adjacencyList.has(start)) {
+			throw new Error(`Vertex ${start} does not exist`);
+		}
+
+		const sub = new Graph<T>();
+		const visited = new Set<VertexId>();
+		const queue: VertexId[] = [start];
+
+		while (queue.length > 0) {
+			const curr = queue.shift();
+			if (curr === undefined) continue;
+
+			if (visited.has(curr)) continue;
+			visited.add(curr);
+
+			const data = this.vertexData.get(curr);
+			if (data !== undefined) sub.addVertex(curr, data);
+
+			const neighbors = this.adjacencyList.get(curr);
+			if (!neighbors) continue;
+
+			for (const n of neighbors) {
+				if (!visited.has(n)) queue.push(n);
+			}
+		}
+
+		for (const v of visited) {
+			const neighbors = this.adjacencyList.get(v);
+			if (!neighbors) continue;
+
+			for (const n of neighbors) {
+				sub.addEdge(v, n);
+			}
+		}
+
+		return sub;
 	}
 
 	printVertexData(): void {
 		console.log(
-			Array.from(this.vertexData.entries())
+			[...this.vertexData.entries()]
 				.map(([key, value], idx) => `V:${key} (${idx}): ${value}`)
 				.join('\n')
 		);
@@ -59,19 +93,16 @@ export class Graph<T> {
 
 	printAdjacenyList(): void {
 		console.log(
-			Array.from(this.adjacencyList.entries())
-				.map(([key, value], idx) => `V:${key} (${idx}): [${Array.from(value)}]`)
+			[...this.adjacencyList.entries()]
+				.map(([key, value], idx) => `V:${key} (${idx}): [${[...value]}]`)
 				.join('\n')
 		);
 	}
 
 	toJSON(): string {
 		const data = {
-			vertices: Array.from(this.vertexData.entries()),
-			edges: Array.from(this.adjacencyList.entries()).map(([v, neighbors]) => [
-				v,
-				Array.from(neighbors)
-			])
+			vertices: [...this.vertexData.entries()],
+			edges: [...this.adjacencyList.entries()].map(([v, neighbors]) => [v, [...neighbors]])
 		};
 		return JSON.stringify(data, null, 2);
 	}
