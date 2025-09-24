@@ -83,20 +83,20 @@ export class Graph<T> {
 		return sub;
 	}
 
-	printVertexData(): void {
-		console.log(
-			[...this.vertexData.entries()]
-				.map(([key, value], idx) => `V:${key} (${idx}): ${value}`)
-				.join('\n')
-		);
+	printVertexData(): string {
+		return [...this.vertexData.entries()]
+			.map(([key, value], idx) => `V:${key} (${idx}): ${value}`)
+			.join('\n');
 	}
 
-	printAdjacenyList(): void {
-		console.log(
-			[...this.adjacencyList.entries()]
-				.map(([key, value], idx) => `V:${key} (${idx}): [${[...value]}]`)
-				.join('\n')
-		);
+	printAdjacenyList(): string {
+		return [...this.adjacencyList.entries()]
+			.map(([key, value], idx) => `V:${key} (${idx}): [${[...value]}]`)
+			.join('\n');
+	}
+
+	printInfo(): string {
+		return `V:${this.vertexData.size}, E:${this.adjacencyList.size}`;
 	}
 
 	toJSON(): string {

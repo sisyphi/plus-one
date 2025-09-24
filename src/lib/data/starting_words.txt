@@ -478,7 +478,6 @@ bitt
 boom
 laud
 bang
-puff
 bale
 harp
 show

@@ -1,10 +1,9 @@
 <script lang="ts">
 	import AnswerList from '$lib/components/AnswerList.svelte';
-	import { type WordData } from '$lib/helper';
+	import { Graph } from '$lib/datatypes/Graph';
 	import { onMount } from 'svelte';
 
-	let wordData: WordData = $state([]);
-	let startingWord: string = $state('');
+	let validationGraph: Graph<string[]>;
 	let guess: string = $state('');
 	let answers: string[] = $state([]);
 	let guessInputEl: HTMLInputElement;
@@ -19,10 +18,13 @@
 		answers.splice(idx);
 	}
 
-	async function fetchStartingWord(): Promise<string> {
+	async function fetchStartingWord(): Promise<{ word: string; graph: Graph<string[]> }> {
 		const res = await fetch('/api/starting-word');
-		const { data } = await res.json();
-		return data;
+		const { word, graph }: { word: string; graph: string } = await res.json();
+
+		const wordGraph: Graph<string[]> = Graph.fromJSON(graph);
+
+		return { word, graph: wordGraph };
 	}
 
 	async function validateGuess(
@@ -40,16 +42,15 @@
 
 	async function handleReset(): Promise<void> {
 		answers = [];
-		const startingWord = await fetchStartingWord();
-		answers.push(startingWord);
 		guess = '';
+		const { word, graph } = await fetchStartingWord();
+		answers.push(word);
+		validationGraph = graph;
 		guessInputEl.focus();
 	}
 
 	onMount(async () => {
-		startingWord = await fetchStartingWord();
-		answers.push(startingWord);
-		guessInputEl.focus();
+		handleReset();
 	});
 </script>
 

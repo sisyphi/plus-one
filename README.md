@@ -10,10 +10,12 @@
 - [] perf: optimize validation
   - [x] create master graph for data
   - [x] create subgraph based on starting signature
+  - [x] get starting word
+  - [x] send starting word to create-subgraph
   - [] compress it
   - [] send it to client
-  - [] save data in local storage / indexedDB / cache (choose which one)
   - [] use data for front end validation
+  - [] save data in local storage / indexedDB / cache (choose which one)?
 
 ## DEV LOG
 
