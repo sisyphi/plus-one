@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fetchWordData } from '$lib';
+	import { getDailyWordData, saveTimezone } from '$lib';
 	import AnswerList from '$lib/components/AnswerList.svelte';
 	import { Graph } from '$lib/datatypes/Graph';
 	import { wordToSignature } from '$lib/helper';
@@ -9,6 +9,7 @@
 	let guess: string = $state('');
 	let answers: string[] = $state([]);
 	let guessInputEl: HTMLInputElement;
+	let tz: string;
 
 	async function handleWordSubmit(
 		guess: string,
@@ -40,14 +41,20 @@
 	async function handleReset(): Promise<void> {
 		answers = [];
 		guess = '';
-		const { word, graph } = await fetchWordData();
+		const { word, graph } = await getDailyWordData();
 		answers.push(word);
 		validationGraph = graph;
 		guessInputEl.focus();
 	}
 
 	onMount(async () => {
-		handleReset();
+		tz =
+			Intl.DateTimeFormat().resolvedOptions().timeZone ??
+			`UTC${Math.round(-new Date().getTimezoneOffset() / 60)}`;
+
+		await saveTimezone(tz);
+
+		await handleReset();
 	});
 </script>
 

@@ -7,13 +7,20 @@
 - [x] refactor: move answer list to a component
 - [x] uiux: show length of guess to compare to last answer
 - [x] feat: move game logic to backend
-- [] perf: optimize validation
+- [x] perf: optimize validation
   - [x] create master graph for data
   - [x] create subgraph based on starting signature
   - [x] get starting word
   - [x] send starting word to create-subgraph
   - [x] send it to client
   - [x] use data for front end validation
+- [x] feat: daily mode
+  - [x] send timezone from client to server
+  - [x] use timezone to get current datetime
+  - [x] create idx using current datetime from origin datetime
+  - [x] get word data using idx
+  - [x] test if it works when reaching past midnight
+  - [x] test if it works w/ different timezones
 
 ## DEV LOG
 

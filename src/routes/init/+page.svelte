@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loadFile } from '$lib';
+	import { loadStaticFile } from '$lib';
 	import { Graph } from '$lib/datatypes/Graph';
 	import { wordToSignature } from '$lib/helper';
 	import { onMount } from 'svelte';
@@ -122,7 +122,7 @@
 	}
 
 	onMount(async () => {
-		words = await loadFile('words_alpha', 'txt');
+		words = await loadStaticFile('words_alpha', 'txt');
 		words = words.toSorted();
 
 		dataMap = createDataMap(words);

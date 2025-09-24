@@ -12,7 +12,7 @@ export const GET: RequestHandler = async () => {
 
 	const graph: Graph<string[]> = nilGraph.getSubgraph(wordToSignature(word));
 
-	console.log('GET api/word: ', word, graph.printInfo());
+	console.log(`GET api/word/random word=${word} graph=${graph.printInfo()}`);
 
 	return new Response(
 		JSON.stringify({
