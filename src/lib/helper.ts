@@ -42,16 +42,6 @@ export function isWordValid(word: string, wordData: WordData): boolean {
 	return wordList.includes(word);
 }
 
-export async function loadFile(filename: string, ext: string): Promise<any> {
-	const res = await fetch(`/data/${filename}.${ext}`);
-	switch (ext) {
-		case 'json':
-			return await res.json();
-		case 'txt':
-			return (await res.text()).replaceAll('\r', '').split('\n');
-	}
-}
-
 export function randElement<T>(arr: T[]): T {
 	const idx = Math.floor(Math.random() * arr.length);
 	return arr[idx];

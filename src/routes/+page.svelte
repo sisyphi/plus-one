@@ -1,49 +1,46 @@
 <script lang="ts">
+	import { fetchWordData } from '$lib';
 	import AnswerList from '$lib/components/AnswerList.svelte';
 	import { Graph } from '$lib/datatypes/Graph';
+	import { wordToSignature } from '$lib/helper';
 	import { onMount } from 'svelte';
 
-	let validationGraph: Graph<string[]>;
+	let validationGraph: Graph<string[]> = $state(new Graph<string[]>());
 	let guess: string = $state('');
 	let answers: string[] = $state([]);
 	let guessInputEl: HTMLInputElement;
 
-	async function handleWordSubmit(guess: string, prevAnswer: string): Promise<void> {
-		const { valid, reason } = await validateGuess(guess, prevAnswer);
+	async function handleWordSubmit(
+		guess: string,
+		prevAnswer: string,
+		graph: Graph<string[]>
+	): Promise<void> {
+		const isValid = validateGuess(guess, prevAnswer, graph);
 
-		if (valid) answers.push(guess.toLowerCase());
+		if (isValid) answers.push(guess.toLowerCase());
 	}
 
 	function handleDeleteAnswer(answers: any[], idx: number): void {
 		answers.splice(idx);
 	}
 
-	async function fetchStartingWord(): Promise<{ word: string; graph: Graph<string[]> }> {
-		const res = await fetch('/api/starting-word');
-		const { word, graph }: { word: string; graph: string } = await res.json();
+	function validateGuess(guess: string, prevAnswer: string, graph: Graph<string[]>): boolean {
+		const guessSig = wordToSignature(guess);
+		const prevSig = wordToSignature(prevAnswer);
 
-		const wordGraph: Graph<string[]> = Graph.fromJSON(graph);
+		const guessData = graph.getVertexData(guessSig);
+		const prevNeigbhors = graph.getNeighbors(prevSig);
 
-		return { word, graph: wordGraph };
-	}
+		if (!prevNeigbhors.includes(guessSig)) return false;
+		if (guessData !== undefined && guessData.includes(guessSig)) return false;
 
-	async function validateGuess(
-		guess: string,
-		prevAnswer: string
-	): Promise<{ valid: boolean; reason: string }> {
-		const res = await fetch('/api/validate-guess', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ guess, prevAnswer })
-		});
-		const data = await res.json();
-		return data;
+		return true;
 	}
 
 	async function handleReset(): Promise<void> {
 		answers = [];
 		guess = '';
-		const { word, graph } = await fetchStartingWord();
+		const { word, graph } = await fetchWordData();
 		answers.push(word);
 		validationGraph = graph;
 		guessInputEl.focus();
@@ -58,12 +55,10 @@
 	<form
 		class="flex w-full flex-col items-center justify-center gap-2"
 		onsubmit={(e) => {
-			if (answers.length) {
-				e.preventDefault();
-				handleWordSubmit(guess.toLowerCase(), answers[answers.length - 1]);
-				guess = '';
-				guessInputEl.focus();
-			}
+			e.preventDefault();
+			handleWordSubmit(guess.toLowerCase(), answers[answers.length - 1] || '', validationGraph);
+			guess = '';
+			guessInputEl.focus();
 		}}
 		autocomplete="off"
 	>
@@ -75,6 +70,11 @@
 			bind:this={guessInputEl}
 		/>
 	</form>
+	<div class="flex flex-row items-center justify-center">
+		{validateGuess(guess, answers[answers.length - 1] || '', validationGraph)
+			? 'is valid'
+			: 'is not valid'}
+	</div>
 	<button class="border px-2 py-0.5 hover:cursor-pointer" onclick={handleReset}> reset </button>
 	<!-- UI: Guess len vs. Last answer len -->
 	{#if answers.length}

@@ -12,10 +12,8 @@
   - [x] create subgraph based on starting signature
   - [x] get starting word
   - [x] send starting word to create-subgraph
-  - [] compress it
-  - [] send it to client
-  - [] use data for front end validation
-  - [] save data in local storage / indexedDB / cache (choose which one)?
+  - [x] send it to client
+  - [x] use data for front end validation
 
 ## DEV LOG
 

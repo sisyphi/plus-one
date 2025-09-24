@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Graph, type VertexId } from '$lib/datatypes/Graph';
-	import { loadFile, wordToSignature } from '$lib/helper';
+	import { loadFile } from '$lib';
+	import { Graph } from '$lib/datatypes/Graph';
+	import { wordToSignature } from '$lib/helper';
 	import { onMount } from 'svelte';
-	import { fromAction } from 'svelte/attachments';
 	let words: string[] = [];
 	let dataMap: Map<number, Map<string, string[]>> = new Map();
 	let startingWords: string[] = [];

@@ -4,7 +4,6 @@ import { randElement, wordToSignature } from '$lib/helper';
 import type { RequestHandler } from '@sveltejs/kit';
 import { Graph } from '$lib/datatypes/Graph';
 
-// TODO::Add subgraph creation using the nil_graph as the basis
 export const GET: RequestHandler = async () => {
 	const startingWords = startingWordsTxt.replaceAll('\r', '').split('\n');
 	const word: string = randElement(startingWords);
@@ -13,7 +12,7 @@ export const GET: RequestHandler = async () => {
 
 	const graph: Graph<string[]> = nilGraph.getSubgraph(wordToSignature(word));
 
-	console.log('GET api/starting-word: ', word, graph.printInfo());
+	console.log('GET api/word: ', word, graph.printInfo());
 
 	return new Response(
 		JSON.stringify({

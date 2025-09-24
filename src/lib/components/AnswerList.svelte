@@ -19,12 +19,14 @@
 				{:else}
 					<div>{answer}</div>
 				{/if}
-				<button
-					class="border px-2 py-0.5 hover:cursor-pointer"
-					onclick={() => handleDeleteAnswer(answers, answers.length - 1 - idx)}
-				>
-					del
-				</button>
+				{#if idx !== answers.length - 1}
+					<button
+						class="border px-2 py-0.5 hover:cursor-pointer"
+						onclick={() => handleDeleteAnswer(answers, answers.length - 1 - idx)}
+					>
+						del
+					</button>
+				{/if}
 			</div>
 		{/each}
 	</div>
