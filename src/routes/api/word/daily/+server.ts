@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
 	const graph: Graph<string[]> = nilGraph.getSubgraph(wordToSignature(word));
 
 	console.log(
-		`GET api/word/daily tz=${tz} dailyIdx=${dailyIdx} word=${word} graph=${graph.printInfo()}`
+		`GET api/word/daily tz=${tz} dailyIdx=${dailyIdx} word=${word} sig=${wordToSignature(word)} graph=${graph.printInfo()}`
 	);
 
 	return new Response(
