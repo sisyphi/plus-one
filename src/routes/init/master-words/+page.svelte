@@ -36,7 +36,7 @@
 
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'combined_words.txt';
+		a.download = 'master_words.txt';
 		a.click();
 
 		URL.revokeObjectURL(url);

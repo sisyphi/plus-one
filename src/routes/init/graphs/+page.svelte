@@ -122,7 +122,7 @@
 	}
 
 	onMount(async () => {
-		words = await loadStaticFile('combined_words', 'txt');
+		words = await loadStaticFile('master_words', 'txt');
 		words = words.toSorted();
 
 		dataMap = createDataMap(words);
