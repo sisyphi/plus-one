@@ -21,9 +21,16 @@
   - [x] get word data using idx
   - [x] test if it works when reaching past midnight
   - [x] test if it works w/ different timezones
-- [] game: refine starting word list to only use w/ a certain amount of nodes
-  - [] generate a list of 4 letter signatures
-  - [] get the graph info w/in the graph of each 4 letter
+- [x] game: refine starting word list to only use w/ a certain amount of nodes
+  - [x] generate a list of 4 letter signatures
+  - [x] get the graph info w/in the graph of each 4 letter
+- [x] perf: lessen size of words and graphs
+- [x] perf: clean up subgraph creation
+  - [x] incorporate neigbor vertex and edge creation in one loop
+- [x] perf: clean up nil graph json handling
+  - [x] remove redundant json stringify when importing nil graph from backend
+  - [x] move nilGraph instantiation to outside of the request to its own file
+- [] refactor: extract logic for subgraph creation to one request. remove redundant getWordData, getDailyWordData, and getRandomWordData
 
 ## Data sources
 

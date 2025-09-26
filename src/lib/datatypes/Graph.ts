@@ -1,4 +1,8 @@
 export type VertexId = string;
+export interface GraphJSON<T> {
+	vertices: [VertexId, T][];
+	edges: [VertexId, VertexId[]][];
+}
 
 export class Graph<T> {
 	private vertexData = new Map<VertexId, T>();
@@ -52,31 +56,27 @@ export class Graph<T> {
 		const sub = new Graph<T>();
 		const visited = new Set<VertexId>();
 		const queue: VertexId[] = [start];
+		let idx = 0;
 
-		while (queue.length > 0) {
-			const curr = queue.shift();
-			if (curr === undefined) continue;
+		while (idx < queue.length) {
+			const curr = queue[idx++];
 
-			if (visited.has(curr)) continue;
-			visited.add(curr);
-
-			const data = this.vertexData.get(curr);
-			if (data !== undefined) sub.addVertex(curr, data);
+			const currData = this.vertexData.get(curr);
+			if (currData !== undefined && !sub.vertexData.has(curr)) sub.addVertex(curr, currData);
 
 			const neighbors = this.adjacencyList.get(curr);
 			if (!neighbors) continue;
 
 			for (const n of neighbors) {
-				if (!visited.has(n)) queue.push(n);
-			}
-		}
+				if (!visited.has(n)) {
+					visited.add(n);
+					queue.push(n);
 
-		for (const v of visited) {
-			const neighbors = this.adjacencyList.get(v);
-			if (!neighbors) continue;
+					const nData = this.vertexData.get(n);
+					if (nData !== undefined && !sub.vertexData.has(n)) sub.addVertex(n, nData);
+				}
 
-			for (const n of neighbors) {
-				sub.addEdge(v, n);
+				sub.addEdge(curr, n);
 			}
 		}
 
@@ -129,26 +129,27 @@ export class Graph<T> {
 		return `V:${this.vertexData.size}, E:${numConnections}`;
 	}
 
-	toJSON(): string {
-		const data = {
+	toJSON(): GraphJSON<T> {
+		return {
 			vertices: [...this.vertexData.entries()],
 			edges: [...this.adjacencyList.entries()].map(([v, neighbors]) => [v, [...neighbors]])
 		};
-		return JSON.stringify(data);
 	}
 
-	static fromJSON<U>(json: string): Graph<U> {
-		const parsed = JSON.parse(json);
+	static fromJSON<U>(input: string | GraphJSON<U>): Graph<U> {
+		const data: GraphJSON<U> = typeof input === 'string' ? JSON.parse(input) : input;
 		const graph = new Graph<U>();
 
-		for (const [id, data] of parsed.vertices) {
-			graph.addVertex(id, data);
+		for (const [id, vertexData] of data.vertices) {
+			graph.addVertex(id, vertexData);
 		}
-		for (const [v, neighbors] of parsed.edges) {
+
+		for (const [v, neighbors] of data.edges) {
 			for (const n of neighbors) {
 				graph.addEdge(v, n);
 			}
 		}
+
 		return graph;
 	}
 }

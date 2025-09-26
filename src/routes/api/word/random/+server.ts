@@ -1,25 +1,25 @@
 import startingWordsTxt from '$lib/data/starting_words.txt?raw';
-import nilGraphJson from '$lib/data/nil_graph.json';
 import { randElement, wordToSignature } from '$lib/helper';
 import type { RequestHandler } from '@sveltejs/kit';
 import { Graph } from '$lib/datatypes/Graph';
+import { nilGraph } from '$lib/NilGraph';
 
 export const GET: RequestHandler = async () => {
 	const startingWords = startingWordsTxt.replaceAll('\r', '').split('\n');
 	const word: string = randElement(startingWords);
 
-	const nilGraph: Graph<string[]> = Graph.fromJSON(JSON.stringify(nilGraphJson));
-
-	const graph: Graph<string[]> = nilGraph.getSubgraph(wordToSignature(word));
+	const subGraph: Graph<string[]> = nilGraph.getSubgraph(wordToSignature(word));
 
 	console.log(
-		`GET api/word/random word=${word} sig=${wordToSignature(word)} graph=${graph.printInfo()}`
+		`GET api/word/random word=${word} sig=${wordToSignature(word)} subGraph=${subGraph.printInfo()}`
 	);
+
+	const graph = subGraph.toJSON();
 
 	return new Response(
 		JSON.stringify({
 			word,
-			graph: graph.toJSON()
+			graph
 		}),
 		{
 			headers: { 'Content-Type': 'application/json' }
