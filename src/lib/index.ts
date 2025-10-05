@@ -1,7 +1,5 @@
 import { Graph } from './datatypes/Graph';
 
-export const PLUS_ONE_EPOCH_DATE = new Date('2025-09-24T00:00:00Z');
-
 export async function saveTimezone(tz: string): Promise<void> {
 	await fetch('/api/tz', {
 		method: 'POST',

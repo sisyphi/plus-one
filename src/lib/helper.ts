@@ -51,7 +51,7 @@ export function wordToSignature(word: string): string {
 	return word.split('').toSorted().join('');
 }
 
-export const PLUS_ONE_EPOCH_DATE = '2025-09-24';
+export const PLUS_ONE_EPOCH_DATE = '2025-10-06';
 
 // Fully chat-gpt
 export function getDaysSinceOrigin(originStr: string, tz: string): number {
