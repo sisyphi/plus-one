@@ -31,6 +31,11 @@
   - [x] remove redundant json stringify when importing nil graph from backend
   - [x] move nilGraph instantiation to outside of the request to its own file
 - [] refactor: extract logic for subgraph creation to one request. remove redundant getWordData, getDailyWordData, and getRandomWordData
+- [] game: review starting words and their graphs
+- [] feat: add score page for run stats
+  - [] add submit button to daily game
+  - [] move to score page on click
+  - [] add share button in score page that copies
 
 ## Data sources
 
