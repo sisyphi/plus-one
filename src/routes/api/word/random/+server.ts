@@ -1,8 +1,8 @@
-import startingWordsTxt from '$lib/data/starting_words.txt?raw';
-import { randElement, wordToSignature } from '$lib/helper';
+import startingWordsTxt from '$lib/data/processed/starting_words.txt?raw';
+import { randElement, wordToSignature } from '$lib/utils/helper';
 import type { RequestHandler } from '@sveltejs/kit';
-import { Graph } from '$lib/datatypes/Graph';
-import { nilGraph } from '$lib/NilGraph';
+import { Graph } from '$lib/types/Graph';
+import { nilGraph } from '$lib/utils/nilGraph';
 
 export const GET: RequestHandler = async () => {
 	const startingWords = startingWordsTxt.replaceAll('\r', '').split('\n');

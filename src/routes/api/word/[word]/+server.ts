@@ -1,7 +1,7 @@
-import { wordToSignature } from '$lib/helper';
+import { wordToSignature } from '$lib/utils/helper';
 import type { RequestHandler } from '@sveltejs/kit';
-import { Graph } from '$lib/datatypes/Graph';
-import { nilGraph } from '$lib/NilGraph';
+import { Graph } from '$lib/types/Graph';
+import { nilGraph } from '$lib/utils/nilGraph';
 
 export const GET: RequestHandler = async ({ params }) => {
 	let { word } = params;

@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@lucide/svelte':
+        specifier: ^0.548.0
+        version: 0.548.0(svelte@5.38.9)
+      imbento-box-ui:
+        specifier: ^1.2.5
+        version: 1.2.5(svelte@5.38.9)
     devDependencies:
       '@sveltejs/adapter-netlify':
         specifier: ^5.0.0
@@ -231,6 +238,16 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@lucide/svelte@0.546.0':
+    resolution: {integrity: sha512-qFVQ+BUJH9Swns7cag3Wik7VqKZfN2hwDZ2VazbZJc8VSqI0kgOZCZ2OVwrvNxdkl8Mw9M9H1ROB0BXh/WH/sA==}
+    peerDependencies:
+      svelte: ^5
+
+  '@lucide/svelte@0.548.0':
+    resolution: {integrity: sha512-Iwh5GXK8+tE1lBjYoBPfOhBiWv6/K/XinZ/Bjx/2Qys86ufZ/CbjHKacYyZeGnyWQSsjcr7P3xavkmCMhv/1RA==}
+    peerDependencies:
+      svelte: ^5
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
@@ -573,6 +590,11 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
+  imbento-box-ui@1.2.5:
+    resolution: {integrity: sha512-sAv2g2WrkBNtTZWnRWHh480gkZJVR9YsFB9W+hgm9O7OXj2+A+lAG3fHElsmbELDPn8ZKvHUGfwKZRW+/PzrGw==}
+    peerDependencies:
+      svelte: ^5.0.0
+
   is-reference@3.0.3:
     resolution: {integrity: sha512-ixkJoqQvAP88E6wLydLGGqCJsrFUnqoH6HnaczB8XmDH1oaWU+xxdptvikTgaEhtZ53Ky6YXiBuUI2WXLMCwjw==}
 
@@ -819,6 +841,9 @@ packages:
     resolution: {integrity: sha512-enpmouVYRlrCJh1T176A+8LgqRVf4Qgin2k6EZ8iU9SpqgmrIidm2M5tBwJttjNcxWjvZzs3rLu33NJoUTsF+Q==}
     engines: {node: '>=18'}
 
+  tailwind-merge@3.3.1:
+    resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
+
   tailwindcss@4.1.13:
     resolution: {integrity: sha512-i+zidfmTqtwquj4hMEwdjshYYgMbOrPzb9a0M3ZgNa0JMoZeFC6bxZvO8yr8ozS6ix2SDz0+mvryPeBs2TFE+w==}
 
@@ -1005,6 +1030,14 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@lucide/svelte@0.546.0(svelte@5.38.9)':
+    dependencies:
+      svelte: 5.38.9
+
+  '@lucide/svelte@0.548.0(svelte@5.38.9)':
+    dependencies:
+      svelte: 5.38.9
 
   '@polka/url@1.0.0-next.29': {}
 
@@ -1289,6 +1322,13 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
+  imbento-box-ui@1.2.5(svelte@5.38.9):
+    dependencies:
+      '@lucide/svelte': 0.546.0(svelte@5.38.9)
+      clsx: 2.1.1
+      svelte: 5.38.9
+      tailwind-merge: 3.3.1
+
   is-reference@3.0.3:
     dependencies:
       '@types/estree': 1.0.8
@@ -1471,6 +1511,8 @@ snapshots:
       locate-character: 3.0.0
       magic-string: 0.30.19
       zimmerframe: 1.1.4
+
+  tailwind-merge@3.3.1: {}
 
   tailwindcss@4.1.13: {}
 

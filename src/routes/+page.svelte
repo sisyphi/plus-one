@@ -1,28 +1,60 @@
 <script lang="ts">
-	import { getDailyWordData, saveTimezone } from '$lib';
-	import AnswerList from '$lib/components/AnswerList.svelte';
-	import { Graph } from '$lib/datatypes/Graph';
-	import { wordToSignature } from '$lib/helper';
+	import { getDailyWordData, saveTimezone } from '$lib/utils/routes';
+	import GuessInput from '$lib/components/GuessInput.svelte';
+	import WordList from '$lib/components/WordList.svelte';
+	import { Graph } from '$lib/types/Graph';
+	import { wordToSignature } from '$lib/utils/helper';
+	import { Button, Divider, Typography } from 'imbento-box-ui';
 	import { onMount } from 'svelte';
 
+	type GAME_STATE = 'menu' | 'game' | 'success';
+
+	let currState: GAME_STATE = $state('menu');
+
 	let validationGraph: Graph<string[]> = $state(new Graph<string[]>());
-	let guess: string = $state('');
+	let guess: string = $state('hello');
 	let answers: string[] = $state([]);
-	let guessInputEl: HTMLInputElement;
+	let selectedIdx: number = $state(0);
+	// let guessInputEl: HTMLInputElement | null = null;
 	let tz: string;
 
-	async function handleWordSubmit(
-		guess: string,
-		prevAnswer: string,
-		graph: Graph<string[]>
-	): Promise<void> {
-		const isValid = validateGuess(guess, prevAnswer, graph);
+	let downDisabled = $derived(selectedIdx === 0);
+	let upDisabled = $derived(selectedIdx === answers.length - 1);
 
-		if (isValid) answers.push(guess.toLowerCase());
+	let nextLength = $derived(selectedIdx + 5);
+	let limit = $derived(`${guess.length}/${nextLength}`);
+
+	let isValidLength = $derived(guess.length === nextLength);
+	let isValidPath = $derived(validateGuess(guess, answers[selectedIdx] || '', validationGraph));
+	let isValidWord = $derived(isValidLength && isValidPath);
+
+	const handleSubmit = (e: SubmitEvent) => {
+		e.preventDefault();
+
+		if (!isValidWord) return;
+
+		if (selectedIdx === answers.length - 1) {
+			answers.push(guess);
+			selectedIdx = answers.length - 1;
+		} else {
+			answers.splice(selectedIdx + 1);
+			answers.push(guess);
+			selectedIdx = answers.length - 1;
+		}
+		guess = '';
+	};
+
+	function handleDelete(idx: number) {
+		answers.splice(idx);
+		selectedIdx = answers.length - 1;
 	}
 
-	function handleDeleteAnswer(answers: any[], idx: number): void {
-		answers.splice(idx);
+	function handleDownClick() {
+		if (selectedIdx > 0) selectedIdx--;
+	}
+
+	function handleUpClick() {
+		if (selectedIdx < answers.length - 1) selectedIdx++;
 	}
 
 	function validateGuess(guess: string, prevAnswer: string, graph: Graph<string[]>): boolean {
@@ -33,7 +65,7 @@
 		const prevNeigbhors = graph.getNeighbors(prevSig);
 
 		if (!prevNeigbhors.includes(guessSig)) return false;
-		if (guessData !== undefined && guessData.includes(guessSig)) return false;
+		if (guessData !== undefined && !guessData.includes(guess)) return false;
 
 		return true;
 	}
@@ -44,7 +76,7 @@
 		const { word, graph } = await getDailyWordData();
 		answers.push(word);
 		validationGraph = graph;
-		guessInputEl.focus();
+		// guessInputEl.focus();
 	}
 
 	onMount(async () => {
@@ -58,42 +90,40 @@
 	});
 </script>
 
-<div class="mx-auto flex w-64 flex-col items-center justify-center gap-4 py-4 font-mono">
-	<form
-		class="flex w-full flex-col items-center justify-center gap-2"
-		onsubmit={(e) => {
-			e.preventDefault();
-			handleWordSubmit(guess.toLowerCase(), answers[answers.length - 1] || '', validationGraph);
-			guess = '';
-			guessInputEl.focus();
-		}}
-		autocomplete="off"
+{#if currState === 'menu'}
+	<Button
+		class="px-8 py-4 hover:bg-red hover:**:text-white"
+		size="medium"
+		onClick={() => (currState = 'game')}
+		align="left"
 	>
-		<input
-			name="starting-word"
-			placeholder="Enter starting word"
-			class="w-full placeholder:text-center"
-			bind:value={guess}
-			bind:this={guessInputEl}
-		/>
-	</form>
-	<div class="flex flex-row items-center justify-center">
-		{validateGuess(guess, answers[answers.length - 1] || '', validationGraph)
-			? 'is valid'
-			: 'is not valid'}
+		<Typography>
+			<span class="text-red">daily</span> play
+		</Typography>
+	</Button>
+	<Divider axis="horizontal" />
+	<Button class="group px-8 py-4 hover:bg-black" size="medium" onClick={handleReset} align="left">
+		<Typography class="group-hover:text-white">how to play?</Typography>
+	</Button>
+	<Divider axis="horizontal" />
+	<div class="flex flex-row justify-between px-8 py-4">
+		<Typography class="flex-1" align="left">best score</Typography>
+		<Typography class="flex-1 font-mono" align="right">10</Typography>
 	</div>
-	<button class="border px-2 py-0.5 hover:cursor-pointer" onclick={handleReset}> reset </button>
-	<!-- UI: Guess len vs. Last answer len -->
-	{#if answers.length}
-		<div class="flex flex-row items-center justify-between gap-4">
-			<div
-				class={guess.length !== answers[answers.length - 1].length + 1
-					? 'text-red-500'
-					: 'text-blue-500'}
-			>
-				{guess.length} / {answers[answers.length - 1].length + 1}
-			</div>
-		</div>
-	{/if}
-	<AnswerList {answers} {guess} {handleDeleteAnswer} />
-</div>
+	<Divider axis="horizontal" />
+{:else if currState === 'game'}
+	<GuessInput bind:guess {limit} {isValidWord} {handleSubmit} />
+	<Divider axis="horizontal" />
+	<WordList
+		{guess}
+		words={answers}
+		onDownClick={handleDownClick}
+		onUpClick={handleUpClick}
+		{downDisabled}
+		{upDisabled}
+		{selectedIdx}
+		onDelete={handleDelete}
+	/>
+{:else if currState === 'success'}
+	<div>Success</div>
+{/if}

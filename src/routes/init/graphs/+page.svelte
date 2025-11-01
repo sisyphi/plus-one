@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { loadStaticFile } from '$lib';
-	import { Graph } from '$lib/datatypes/Graph';
-	import { wordToSignature } from '$lib/helper';
+	import { loadStaticFile } from '$lib/utils/routes';
+	import { Graph } from '$lib/types/Graph';
+	import { wordToSignature } from '$lib/utils/helper';
 	import { onMount } from 'svelte';
 	let words: string[] = [];
 	let dataMap: Map<number, Map<string, string[]>> = new Map();
@@ -141,7 +141,8 @@
 	</button>
 	<button
 		class="border-2 border-black p-2 hover:cursor-pointer"
-		onclick={() => downloadJsonStrAsJson(graph.getSubgraph('').toJSON(), 'nil_graph')}
+		onclick={() =>
+			downloadJsonStrAsJson(JSON.stringify(graph.getSubgraph('').toJSON()), 'nil_graph')}
 	>
 		Download graph
 	</button>
