@@ -11,7 +11,7 @@
 </svelte:head>
 
 <MainContainer>
-	<Background pattern="stagStar" color="blue" />
+	<Background pattern="stagStar" color="blue" animate={false} />
 	<Header>Plus One</Header>
 	<ContentContainer>
 		{@render children?.()}

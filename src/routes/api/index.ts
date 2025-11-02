@@ -1,10 +1,10 @@
-import { Graph } from '../types/Graph';
+import { Graph } from '../../lib/types/Graph';
 
-export async function saveTimezone(tz: string): Promise<void> {
-	await fetch('/api/tz', {
+export async function saveTimezone(timeZone: string): Promise<void> {
+	await fetch('/api/timeZone', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ tz }),
+		body: JSON.stringify({ timeZone }),
 		credentials: 'same-origin'
 	});
 }

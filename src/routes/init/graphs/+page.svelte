@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loadStaticFile } from '$lib/utils/routes';
+	import { loadStaticFile } from '../../api';
 	import { Graph } from '$lib/types/Graph';
 	import { wordToSignature } from '$lib/utils/helper';
 	import { onMount } from 'svelte';

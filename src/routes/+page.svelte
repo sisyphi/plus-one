@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { getDailyWordData, saveTimezone } from '$lib/utils/routes';
+	import { getDailyWordData, saveTimezone } from './api';
 	import GuessInput from '$lib/components/GuessInput.svelte';
 	import WordList from '$lib/components/WordList.svelte';
 	import { Graph } from '$lib/types/Graph';
 	import { wordToSignature } from '$lib/utils/helper';
 	import { Button, Divider, Typography } from 'imbento-box-ui';
 	import { onMount } from 'svelte';
+	import { getUserTimezone } from '$lib/utils/datetime';
+	import { EMPTY_PLAYER_DATA, updatePlayerData, type PlayerData } from '$lib/utils/playerData';
 
-	type GAME_STATE = 'menu' | 'game' | 'success';
+	type GAME_STATE = 'menu' | 'game' | 'success' | 'guide';
 
 	let currState: GAME_STATE = $state('menu');
 
@@ -15,8 +17,9 @@
 	let guess: string = $state('hello');
 	let answers: string[] = $state([]);
 	let selectedIdx: number = $state(0);
+	let playerData: PlayerData = $state(EMPTY_PLAYER_DATA);
 	// let guessInputEl: HTMLInputElement | null = null;
-	let tz: string;
+	let timeZone: string;
 
 	let downDisabled = $derived(selectedIdx === 0);
 	let upDisabled = $derived(selectedIdx === answers.length - 1);
@@ -28,7 +31,7 @@
 	let isValidPath = $derived(validateGuess(guess, answers[selectedIdx] || '', validationGraph));
 	let isValidWord = $derived(isValidLength && isValidPath);
 
-	const handleSubmit = (e: SubmitEvent) => {
+	const handleGuessSubmit = (e: SubmitEvent) => {
 		e.preventDefault();
 
 		if (!isValidWord) return;
@@ -80,14 +83,41 @@
 	}
 
 	onMount(async () => {
-		tz =
-			Intl.DateTimeFormat().resolvedOptions().timeZone ??
-			`UTC${Math.round(-new Date().getTimezoneOffset() / 60)}`;
+		timeZone = getUserTimezone();
 
-		await saveTimezone(tz);
+		await saveTimezone(timeZone);
 
 		await handleReset();
 	});
+
+	function createShareText() {
+		const today = new Date().toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+
+		const colorBlocks = ['🟥', '🟧', '🟨', '🟩', '🟦', '🟪'];
+		const blackBlocks = ['⬛️', '⬛️', '⬛️', '⬛️', '⬛️', '⬛️'];
+
+		const score = answers.length - 1;
+
+		// TODO::if score > colorBlocks.length, show special message
+		const blocks = [...colorBlocks.slice(0, score), ...blackBlocks.slice(score)].join('');
+
+		return `Plus One - ${today}\n${blocks}\n`;
+	}
+
+	function handleGameSubmit() {
+		playerData = updatePlayerData(answers.length - 1);
+
+		currState = 'success';
+	}
+
+	function handleShare() {
+		const shareText = createShareText();
+		navigator.clipboard.writeText(shareText);
+	}
 </script>
 
 {#if currState === 'menu'}
@@ -102,8 +132,13 @@
 		</Typography>
 	</Button>
 	<Divider axis="horizontal" />
-	<Button class="group px-8 py-4 hover:bg-black" size="medium" onClick={handleReset} align="left">
-		<Typography class="group-hover:text-white">how to play?</Typography>
+	<Button
+		class="px-8 py-4 hover:bg-black hover:**:text-white"
+		size="medium"
+		onClick={() => (currState = 'guide')}
+		align="left"
+	>
+		<Typography>how to play?</Typography>
 	</Button>
 	<Divider axis="horizontal" />
 	<div class="flex flex-row justify-between px-8 py-4">
@@ -112,7 +147,7 @@
 	</div>
 	<Divider axis="horizontal" />
 {:else if currState === 'game'}
-	<GuessInput bind:guess {limit} {isValidWord} {handleSubmit} />
+	<GuessInput bind:guess {limit} {isValidWord} handleSubmit={handleGuessSubmit} />
 	<Divider axis="horizontal" />
 	<WordList
 		{guess}
@@ -124,6 +159,17 @@
 		{selectedIdx}
 		onDelete={handleDelete}
 	/>
+	<Button class="px-8 py-4 hover:bg-blue hover:**:text-white" onClick={handleGameSubmit}>
+		<Typography>submit</Typography>
+	</Button>
+	<Divider axis="horizontal" />
 {:else if currState === 'success'}
-	<div>Success</div>
+	<Typography>Best Streak: {playerData.bestStreak}</Typography>
+	<Typography>Current Streak: {playerData.currStreak}</Typography>
+	<Typography>Score: {answers.length - 1}</Typography>
+	<Typography>Highest Score Today: {playerData.lastScore}</Typography>
+	<!-- <ScoreDistribution data={playerData.scoreDist} maxScore={6}/> -->
+	<Button onClick={handleShare}><Typography>share!</Typography></Button>
+{:else if currState === 'guide'}
+	<Typography>Guide</Typography>
 {/if}
