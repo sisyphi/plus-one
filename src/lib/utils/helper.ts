@@ -4,6 +4,8 @@ export type WordData = {
 	};
 };
 
+export type GameState = 'menu' | 'game' | 'success' | 'guide';
+
 export function isOneLetterApart(wordA: string, wordB: string): boolean {
 	if (wordA.length > wordB.length) {
 		[wordA, wordB] = [wordB, wordA];
