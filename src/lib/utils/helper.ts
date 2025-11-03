@@ -6,6 +6,10 @@ export type WordData = {
 
 export type GameState = 'menu' | 'game' | 'success' | 'guide';
 
+export function leadingZero(num: number, size: number): string {
+	return String(num).padStart(size, '0');
+}
+
 export function isOneLetterApart(wordA: string, wordB: string): boolean {
 	if (wordA.length > wordB.length) {
 		[wordA, wordB] = [wordB, wordA];

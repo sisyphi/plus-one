@@ -15,7 +15,7 @@
 	import GuidePage from '$lib/components/GuidePage.svelte';
 	import type { GameState } from '$lib/utils/helper';
 
-	let currState: GameState = $state('menu');
+	let currState: GameState = $state('success');
 
 	let dailyWord: string = '';
 	let dailyGraph: Graph<string[]> = $state(new Graph<string[]>());
@@ -51,6 +51,8 @@
 		const { word, graph } = await getDailyWordData();
 		dailyWord = word;
 		dailyGraph = graph;
+
+		playerData = getPlayerData();
 
 		handleReset();
 	});

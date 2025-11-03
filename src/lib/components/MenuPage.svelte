@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GameState } from '$lib/utils/helper';
+	import { Calendar1Icon } from '@lucide/svelte';
 	import { Button, Typography, Divider } from 'imbento-box-ui';
 
 	interface MenuPageProps {
@@ -12,11 +13,12 @@
 </script>
 
 <Button
-	class="px-8 py-4 hover:bg-red hover:**:text-white"
+	class="flex flex-row gap-2 px-8 py-4 hover:bg-red hover:**:text-white"
 	size="medium"
 	onClick={() => (state = 'game')}
 	align="left"
 >
+	<Calendar1Icon strokeWidth={2.5} />
 	<Typography>
 		<span class="text-red">daily</span> play
 	</Typography>
