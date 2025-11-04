@@ -10,23 +10,11 @@
 
 	let { data, currScore, maxScore }: ScoreDistributionProps = $props();
 
-	// TODO::Delete this mock data
-	currScore = 5;
-	data = {
-		'1': 5,
-		'2': 10,
-		'4': 0,
-		'5': 1,
-		'6': 4,
-		'7': 2,
-		'8': 4
-	};
-
 	let formattedData = $derived.by(() => {
 		const base = Array.from({ length: maxScore }).map((_, idx) => {
 			const score = idx + 1;
 			return {
-				label: String(score),
+				label: String(score + 4),
 				count: data[String(score)] ?? 0
 			};
 		});
@@ -53,7 +41,7 @@
 <Typography class="py-2" size="lg">guess distribution</Typography>
 <Divider axis="horizontal" />
 <div class="flex w-full flex-col">
-	{#each formattedData as { label, count } (label)}
+	{#each formattedData.reverse() as { label, count }}
 		<div class="flex flex-row items-center">
 			<Typography class="w-8 font-mono" size="sm">
 				{#if label.endsWith('+')}

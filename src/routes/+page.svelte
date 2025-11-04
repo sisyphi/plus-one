@@ -15,7 +15,7 @@
 	import GuidePage from '$lib/components/GuidePage.svelte';
 	import type { GameState } from '$lib/utils/helper';
 
-	let currState: GameState = $state('success');
+	let currState: GameState = $state('menu');
 
 	let dailyWord: string = '';
 	let dailyGraph: Graph<string[]> = $state(new Graph<string[]>());
@@ -25,6 +25,7 @@
 	let playerData: PlayerData = $state(EMPTY_PLAYER_DATA);
 	let timeZone: string;
 	let currScore: number = $state(0);
+	let loading = $state(true);
 
 	function handleReset() {
 		answers = [];
@@ -55,14 +56,15 @@
 		playerData = getPlayerData();
 
 		handleReset();
+		loading = false;
 	});
 </script>
 
 {#if currState === 'menu'}
-	<MenuPage bind:state={currState} />
+	<MenuPage bind:appState={currState} loading={false} />
 {:else if currState === 'game'}
 	<GamePage
-		bind:state={currState}
+		bind:appState={currState}
 		bind:guess
 		bind:answers
 		bind:selectedIdx
@@ -70,7 +72,7 @@
 		{handleGameSubmit}
 	/>
 {:else if currState === 'success'}
-	<SuccessPage bind:state={currState} {playerData} score={currScore} />
+	<SuccessPage bind:appState={currState} {playerData} score={currScore} />
 {:else if currState === 'guide'}
-	<GuidePage bind:state={currState} />
+	<GuidePage bind:appState={currState} />
 {/if}

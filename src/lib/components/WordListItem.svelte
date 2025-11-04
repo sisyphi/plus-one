@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PencilIcon, PenIcon, Trash2Icon, XIcon } from '@lucide/svelte';
+	import { PencilIcon, Trash2Icon } from '@lucide/svelte';
 	import { cn, Typography, Divider, Button } from 'imbento-box-ui';
 
 	interface WordListItemProps {
@@ -15,7 +15,7 @@
 
 <!-- TODO::auto text color adjust to bg color -->
 <div class={cn('flex h-10 flex-row')}>
-	<div class={cn('flex h-full flex-row items-center justify-between gap-4')}>
+	<div class={cn('flex h-full flex-row items-center justify-between')}>
 		<div class={cn('flex h-full flex-row', highlight && 'bg-red')}>
 			{#if !removeDelete}
 				<Typography
@@ -25,7 +25,7 @@
 					{#if highlight}
 						<PencilIcon strokeWidth={2.5} class={cn('w-full')} />
 					{:else}
-						{idx - 1}
+						{idx + 3}
 					{/if}
 				</Typography>
 			{:else}
@@ -44,10 +44,10 @@
 			{text}
 		</Typography>
 	</div>
-	<div class={cn('flex h-full flex-row items-center justify-between gap-4')}>
+	<div class={cn('flex h-full flex-row items-center justify-between')}>
 		<div class={cn('flex h-full flex-row')}>
-			<Divider axis="vertical" class="h-full" />
 			{#if !removeDelete}
+				<Divider axis="vertical" class="h-full" />
 				<Button
 					onClick={onDelete}
 					padding="icon"

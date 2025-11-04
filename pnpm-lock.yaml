@@ -12,8 +12,8 @@ importers:
         specifier: ^0.548.0
         version: 0.548.0(svelte@5.38.9)
       imbento-box-ui:
-        specifier: ^1.2.5
-        version: 1.2.5(svelte@5.38.9)
+        specifier: ^1.2.6s
+        version: 1.2.6(svelte@5.38.9)
     devDependencies:
       '@sveltejs/adapter-netlify':
         specifier: ^5.0.0
@@ -590,8 +590,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  imbento-box-ui@1.2.5:
-    resolution: {integrity: sha512-sAv2g2WrkBNtTZWnRWHh480gkZJVR9YsFB9W+hgm9O7OXj2+A+lAG3fHElsmbELDPn8ZKvHUGfwKZRW+/PzrGw==}
+  imbento-box-ui@1.2.6:
+    resolution: {integrity: sha512-cq76H3MrATkt6LOoruDFEPgVlh8Vy3uY9pHniBfz3ZUZMePHH+RgEjUeP3sRFwL/q1yj2j9cL/Skr8dogOO+Vg==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -1322,7 +1322,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  imbento-box-ui@1.2.5(svelte@5.38.9):
+  imbento-box-ui@1.2.6(svelte@5.38.9):
     dependencies:
       '@lucide/svelte': 0.546.0(svelte@5.38.9)
       clsx: 2.1.1

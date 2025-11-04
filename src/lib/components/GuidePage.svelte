@@ -4,11 +4,11 @@
 	import { Button, Typography } from 'imbento-box-ui';
 
 	interface GuidePageProps {
-		state: GameState;
+		appState: GameState;
 	}
 
-	let { state = $bindable() }: GuidePageProps = $props();
+	let { appState = $bindable() }: GuidePageProps = $props();
 </script>
 
 <Typography>guide page</Typography>
-<Button onClick={() => (state = 'menu')} padding="icon"><XIcon strokeWidth={4} /></Button>
+<Button onClick={() => (appState = 'menu')} padding="icon"><XIcon strokeWidth={4} /></Button>

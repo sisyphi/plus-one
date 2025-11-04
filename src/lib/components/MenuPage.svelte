@@ -1,22 +1,25 @@
 <script lang="ts">
 	import type { GameState } from '$lib/utils/helper';
 	import { Calendar1Icon } from '@lucide/svelte';
-	import { Button, Typography, Divider } from 'imbento-box-ui';
+	import { Button, Typography, Divider, cn } from 'imbento-box-ui';
 
 	interface MenuPageProps {
-		state: GameState;
+		appState: GameState;
+		loading: boolean;
 	}
 
-	let { state = $bindable() }: MenuPageProps = $props();
-
-	const bestWord = 'N/A';
+	let { appState = $bindable(), loading }: MenuPageProps = $props();
 </script>
 
 <Button
-	class="flex flex-row gap-2 px-8 py-4 hover:bg-red hover:**:text-white"
+	class={cn(
+		'flex flex-row gap-2 px-8 py-4 hover:bg-red hover:**:text-white',
+		loading && '**:text-black'
+	)}
 	size="medium"
-	onClick={() => (state = 'game')}
+	onClick={() => (appState = 'game')}
 	align="left"
+	disabled={loading}
 >
 	<Calendar1Icon strokeWidth={2.5} />
 	<Typography>
@@ -24,10 +27,10 @@
 	</Typography>
 </Button>
 <Divider axis="horizontal" />
-<Button
+<!-- <Button
 	class="px-8 py-4 hover:bg-black hover:**:text-white"
 	size="medium"
-	onClick={() => (state = 'guide')}
+	onClick={() => (appState = 'guide')}
 	align="left"
 >
 	<Typography>how to play?</Typography>
@@ -37,4 +40,4 @@
 	<Typography class="flex-1" align="left">best word</Typography>
 	<Typography class="flex-1 font-mono" align="right">{bestWord}</Typography>
 </div>
-<Divider axis="horizontal" />
+<Divider axis="horizontal" /> -->

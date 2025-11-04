@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { Divider, WordList, Button, Typography } from 'imbento-box-ui';
+	import { Divider, Button, Typography, cn, HighlightText } from 'imbento-box-ui';
 	import GuessInput from './GuessInput.svelte';
-	import { wordToSignature, type GameState } from '$lib/utils/helper';
+	import { containsAllLetters, wordToSignature, type GameState } from '$lib/utils/helper';
 	import type { Graph } from '$lib/types/Graph';
+	import WordList from './WordList.svelte';
+	import { ChevronDownIcon, ChevronUpIcon } from '@lucide/svelte';
 
 	interface GamePageProps {
-		state: GameState;
+		appState: GameState;
 		guess: string;
 		answers: string[];
 		validationGraph: Graph<string[]>;
@@ -14,7 +16,7 @@
 	}
 
 	let {
-		state = $bindable(),
+		appState = $bindable(),
 		guess = $bindable(),
 		answers = $bindable(),
 		selectedIdx = $bindable(),
@@ -22,15 +24,17 @@
 		handleGameSubmit
 	}: GamePageProps = $props();
 
-	let downDisabled = $derived(selectedIdx === 0);
-	let upDisabled = $derived(selectedIdx === answers.length - 1);
+	let showWordlist = $state(true);
 
 	let nextLength = $derived(selectedIdx + 5);
-	let limit = $derived(`${guess.length}/${nextLength}`);
 
-	let isValidLength = $derived(guess.length === nextLength);
-	let isValidPath = $derived(validateGuess(guess, answers[selectedIdx] || '', validationGraph));
-	let isValidWord = $derived(isValidLength && isValidPath);
+	let isConnected = $derived(
+		validateGuess(guess.toLowerCase(), answers[selectedIdx] || '', validationGraph)
+	);
+	let isAnagram = $derived(containsAllLetters(guess, answers[selectedIdx]));
+	let isShort = $derived(guess.length < nextLength);
+	let isLong = $derived(guess.length > nextLength);
+	let isValid = $derived(isConnected && isAnagram && !isShort && !isLong);
 
 	function validateGuess(guess: string, prevAnswer: string, graph: Graph<string[]>): boolean {
 		const guessSig = wordToSignature(guess);
@@ -50,44 +54,111 @@
 		selectedIdx = answers.length - 1;
 	}
 
-	function handleDownClick() {
-		if (selectedIdx > 0) selectedIdx--;
-	}
-
-	function handleUpClick() {
-		if (selectedIdx < answers.length - 1) selectedIdx++;
-	}
-
 	function handleGuessSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		if (!isValidWord) return;
+		if (!isValid) return;
 
 		if (selectedIdx === answers.length - 1) {
-			answers.push(guess);
+			answers.push(guess.toLowerCase());
 			selectedIdx = answers.length - 1;
 		} else {
 			answers.splice(selectedIdx + 1);
-			answers.push(guess);
+			answers.push(guess.toLowerCase());
 			selectedIdx = answers.length - 1;
 		}
+
 		guess = '';
 	}
+
+	let selectedWord = $derived(answers[selectedIdx]);
 </script>
 
-<GuessInput bind:guess {limit} {isValidWord} handleSubmit={handleGuessSubmit} />
+<div class="flex h-fit flex-row">
+	<Typography
+		class={cn(
+			'h-full flex-1 place-content-center self-center bg-red py-2 leading-5',
+			!isShort && !isLong && 'bg-green'
+		)}
+		color="white"
+	>
+		{#if isShort}
+			too short
+		{:else if isLong}
+			too long
+		{:else}
+			correct<br />length
+		{/if}
+	</Typography>
+	<Divider axis="vertical" />
+	<Typography
+		class={cn(
+			'h-full flex-1 place-content-center self-center bg-red py-2 leading-5',
+			isAnagram && 'bg-green'
+		)}
+		color="white"
+	>
+		{#if !isAnagram}
+			missing<br />letters
+		{:else}
+			complete<br />letters
+		{/if}
+	</Typography>
+	<Divider axis="vertical" />
+	<Typography
+		class={cn(
+			'h-full flex-1 place-content-center self-center bg-red py-2 leading-5',
+			isConnected && 'bg-green'
+		)}
+		color="white"
+	>
+		{#if !isConnected}
+			invalid<br />word
+		{:else}
+			valid<br />word
+		{/if}
+	</Typography>
+</div>
 <Divider axis="horizontal" />
-<WordList
-	{guess}
-	words={answers}
-	onDownClick={handleDownClick}
-	onUpClick={handleUpClick}
-	{downDisabled}
-	{upDisabled}
-	{selectedIdx}
-	onDelete={handleDelete}
-/>
-<Button class="px-8 py-4 hover:bg-blue hover:**:text-white" onClick={handleGameSubmit}>
-	<Typography>submit</Typography>
+
+<div class={cn('flex flex-row items-baseline justify-center')}>
+	{#if selectedWord}
+		<Typography size="xl" class={cn('pt-4 pb-2 text-center font-mono')}>
+			<HighlightText
+				highlights={guess.toLowerCase().split('')}
+				text={selectedWord}
+				baseColor="lightGrey"
+				highlightColor="black"
+			/>
+		</Typography>
+	{/if}
+</div>
+
+<div class={cn('flex flex-row items-center justify-between')}>
+	<Typography class="size-10 place-content-center">{nextLength}</Typography>
+	<GuessInput bind:guess handleSubmit={handleGuessSubmit} />
+	<Button class="size-10" onClick={() => (showWordlist = !showWordlist)} padding="icon">
+		{#if showWordlist}
+			<ChevronUpIcon strokeWidth={4} />
+		{:else}
+			<ChevronDownIcon strokeWidth={4} />
+		{/if}
+	</Button>
+</div>
+<Divider axis="horizontal" />
+
+<div class={cn(!showWordlist && 'hidden')}>
+	<WordList words={answers} {selectedIdx} onDelete={handleDelete} />
+</div>
+
+<Button
+	class={cn(
+		'hover:bg-black hover:**:text-white',
+		answers.length <= 1 && 'hover:bg-dark-grey hover:**:text-black'
+	)}
+	onClick={handleGameSubmit}
+	disabled={answers.length <= 1}
+>
+	<Typography>submit game</Typography>
 </Button>
 <Divider axis="horizontal" />

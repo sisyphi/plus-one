@@ -10,6 +10,21 @@ export function leadingZero(num: number, size: number): string {
 	return String(num).padStart(size, '0');
 }
 
+export function containsAllLetters(wordA: string, wordB: string): boolean {
+	if (!wordA || !wordB) return false;
+
+	const a = wordA.toLowerCase().split('');
+	const b = wordB.toLowerCase().split('');
+
+	for (const char of b) {
+		const index = a.indexOf(char);
+		if (index === -1) return false;
+		a.splice(index, 1);
+	}
+
+	return true;
+}
+
 export function isOneLetterApart(wordA: string, wordB: string): boolean {
 	if (wordA.length > wordB.length) {
 		[wordA, wordB] = [wordB, wordA];

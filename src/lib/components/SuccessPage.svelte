@@ -5,12 +5,12 @@
 	import ScoreDistribution from './ScoreDistribution.svelte';
 
 	interface SuccessPageProps {
-		state: GameState;
+		appState: GameState;
 		playerData: PlayerData;
 		score: number;
 	}
 
-	let { state = $bindable(), playerData, score }: SuccessPageProps = $props();
+	let { appState = $bindable(), playerData, score }: SuccessPageProps = $props();
 
 	let { currStreak, bestStreak, lastScore } = $derived(playerData);
 
@@ -79,7 +79,7 @@
 	<Typography>share!</Typography>
 </Button>
 <Divider axis="horizontal" />
-<Button onClick={() => (state = 'menu')}>
+<Button onClick={() => (appState = 'menu')}>
 	<Typography>back to menu</Typography>
 </Button>
 <Divider axis="horizontal" />
