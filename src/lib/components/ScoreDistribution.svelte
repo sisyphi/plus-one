@@ -26,7 +26,7 @@
 		if (overflowKeys.length > 0) {
 			const overflowSum = overflowKeys.reduce((sum, key) => sum + (data[String(key)] ?? 0), 0);
 			base.push({
-				label: `${maxScore + 1}+`,
+				label: '10+',
 				count: overflowSum
 			});
 		}
@@ -43,7 +43,7 @@
 <div class="flex w-full flex-col">
 	{#each formattedData.reverse() as { label, count }}
 		<div class="flex flex-row items-center">
-			<Typography class="w-8 font-mono" size="sm">
+			<Typography class="w-10 font-mono" size="sm">
 				{#if label.endsWith('+')}
 					{label}
 				{:else}
@@ -54,15 +54,16 @@
 			<div class="h-full flex-1 overflow-hidden">
 				<div
 					class={cn(
-						'h-full bg-red transition-all duration-300',
-						label === activeScore && 'patt-diag-stripes-sm bg-blue',
+						'flex h-full justify-end bg-red transition-all duration-300',
 						count !== 0 && count !== maxCount && 'border-r-4 border-black'
 					)}
 					style={`width: ${(count / maxCount) * 100}%;background-size: 25px 25px;`}
-				></div>
+				>
+					<Typography class="pr-2 font-mono" size="sm" color="white">
+						{count}
+					</Typography>
+				</div>
 			</div>
-			<Divider axis="vertical" />
-			<Typography class="w-8 font-mono" size="sm">{leadingZero(count, 2)}</Typography>
 		</div>
 		<Divider axis="horizontal" />
 	{/each}

@@ -72,9 +72,12 @@
 	</div>
 </div>
 <Divider axis="horizontal" />
+
 <div class="h-8 bg-red"></div>
 <Divider axis="horizontal" />
+
 <ScoreDistribution data={playerData.scoreDist} currScore={score} maxScore={6} />
+
 <Button onClick={handleShare}>
 	<Typography>share!</Typography>
 </Button>

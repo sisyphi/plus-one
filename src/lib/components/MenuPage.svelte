@@ -35,8 +35,8 @@
 >
 	<Typography>how to play?</Typography>
 </Button>
-<Divider axis="horizontal" />
-<div class="flex flex-row justify-between px-8 py-4">
+<Divider axis="horizontal" /> -->
+<!-- <div class="flex flex-row justify-between px-8 py-4">
 	<Typography class="flex-1" align="left">best word</Typography>
 	<Typography class="flex-1 font-mono" align="right">{bestWord}</Typography>
 </div>
