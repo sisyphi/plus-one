@@ -4,11 +4,12 @@
 	interface GuessInputProps {
 		guess: string;
 		handleSubmit: (e: SubmitEvent) => void;
+		placeholder?: string;
 	}
 
-	let { guess = $bindable(), handleSubmit }: GuessInputProps = $props();
+	let { guess = $bindable(), placeholder = 'type here', handleSubmit }: GuessInputProps = $props();
 </script>
 
-<form class={cn('flex flex-1 flex-row items-center')} onsubmit={handleSubmit} autocomplete="off">
-	<TextField bind:value={guess} placeholder="type here" class={cn('flex-1')} />
+<form class={cn('flex flex-row items-center')} onsubmit={handleSubmit} autocomplete="off">
+	<TextField bind:value={guess} {placeholder} class={cn('flex-1')} />
 </form>

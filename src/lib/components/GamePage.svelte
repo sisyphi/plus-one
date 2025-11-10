@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { Divider, Button, Typography, cn, HighlightText } from 'imbento-box-ui';
 	import GuessInput from './GuessInput.svelte';
-	import { containsAllLetters, wordToSignature, type GameState } from '$lib/utils/helper';
+	import {
+		containsAllLetters,
+		validateGuess,
+		wordToSignature,
+		type GameState
+	} from '$lib/utils/helper';
 	import type { Graph } from '$lib/types/Graph';
 	import WordList from './WordList.svelte';
 	import { ChevronDownIcon, ChevronUpIcon } from '@lucide/svelte';
@@ -35,19 +40,6 @@
 	let isShort = $derived(guess.length < nextLength);
 	let isLong = $derived(guess.length > nextLength);
 	let isValid = $derived(isConnected && isAnagram && !isShort && !isLong);
-
-	function validateGuess(guess: string, prevAnswer: string, graph: Graph<string[]>): boolean {
-		const guessSig = wordToSignature(guess);
-		const prevSig = wordToSignature(prevAnswer);
-
-		const guessData = graph.getVertexData(guessSig);
-		const prevNeigbhors = graph.getNeighbors(prevSig);
-
-		if (!prevNeigbhors.includes(guessSig)) return false;
-		if (guessData !== undefined && !guessData.includes(guess)) return false;
-
-		return true;
-	}
 
 	function handleDelete(idx: number) {
 		answers.splice(idx);

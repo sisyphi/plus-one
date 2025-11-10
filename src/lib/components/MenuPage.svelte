@@ -27,7 +27,7 @@
 	</Typography>
 </Button>
 <Divider axis="horizontal" />
-<!-- <Button
+<Button
 	class="px-8 py-4 hover:bg-black hover:**:text-white"
 	size="medium"
 	onClick={() => (appState = 'guide')}
@@ -35,7 +35,7 @@
 >
 	<Typography>how to play?</Typography>
 </Button>
-<Divider axis="horizontal" /> -->
+<Divider axis="horizontal" />
 <!-- <div class="flex flex-row justify-between px-8 py-4">
 	<Typography class="flex-1" align="left">best word</Typography>
 	<Typography class="flex-1 font-mono" align="right">{bestWord}</Typography>

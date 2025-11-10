@@ -1,3 +1,5 @@
+import type { Graph } from '$lib/types/Graph';
+
 export type WordData = {
 	[keyLen: number]: {
 		[key: string]: string[];
@@ -70,4 +72,17 @@ export function randElement<T>(arr: T[]): T {
 
 export function wordToSignature(word: string): string {
 	return word.split('').toSorted().join('');
+}
+
+export function validateGuess(guess: string, prevAnswer: string, graph: Graph<string[]>): boolean {
+	const guessSig = wordToSignature(guess);
+	const prevSig = wordToSignature(prevAnswer);
+
+	const guessData = graph.getVertexData(guessSig);
+	const prevNeigbhors = graph.getNeighbors(prevSig);
+
+	if (!prevNeigbhors.includes(guessSig)) return false;
+	if (guessData !== undefined && !guessData.includes(guess)) return false;
+
+	return true;
 }
