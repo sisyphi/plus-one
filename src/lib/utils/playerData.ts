@@ -28,7 +28,7 @@ export function getPlayerData(): PlayerData {
 	return playerDataJson ? JSON.parse(playerDataJson) : EMPTY_PLAYER_DATA;
 }
 
-export function savePlayerData(data: PlayerData) {
+export function setPlayerData(data: PlayerData) {
 	localStorage.setItem('playerData', JSON.stringify(data));
 }
 
@@ -51,7 +51,7 @@ export function updatePlayerData(score: number): PlayerData {
 		playerData.lastScore = score;
 		scoreDist[score] = 1;
 
-		savePlayerData(playerData);
+		setPlayerData(playerData);
 
 		return playerData;
 	}
@@ -75,7 +75,7 @@ export function updatePlayerData(score: number): PlayerData {
 		playerData.lastPlayed = today;
 		playerData.lastScore = score;
 
-		savePlayerData(playerData);
+		setPlayerData(playerData);
 		return playerData;
 	}
 
@@ -90,7 +90,7 @@ export function updatePlayerData(score: number): PlayerData {
 			playerData.lastScore = score;
 		}
 
-		savePlayerData(playerData);
+		setPlayerData(playerData);
 	}
 
 	return playerData;

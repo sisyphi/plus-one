@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { containsAllLetters, validateGuess, type GameState } from '$lib/utils/helper';
-	import { SquareCheckIcon, SquareIcon, XIcon } from '@lucide/svelte';
+	import { containsAllLetters, loadStaticFile, validateGuess } from '$lib/utils/helper';
+	import { XIcon } from '@lucide/svelte';
 	import { Button, cn, Divider, HighlightText, Typography } from 'imbento-box-ui';
 	import { onMount } from 'svelte';
-	import { loadStaticFile } from '../../routes/api';
+
 	import { Graph } from '$lib/types/Graph';
 	import GuessInput from './GuessInput.svelte';
+	import { gameState } from '$lib/stores/GameState.svelte';
 
 	let graph: Graph<string[]> = $state(new Graph<string[]>());
 	let answers: string[] = $state(['test']);
 	let guess: string = $state('');
 
-	interface GuidePageProps {
-		appState: GameState;
-	}
+	interface GuidePageProps {}
 
-	let { appState = $bindable() }: GuidePageProps = $props();
+	let {}: GuidePageProps = $props();
 
 	let lastAnswer = $derived(answers[answers.length - 1]);
 
@@ -52,7 +51,7 @@
 
 <div class="flex flex-row items-center">
 	<Typography class="flex-1 px-4 py-2" align="left">how to play?</Typography>
-	<Button class="m-2 w-8" onClick={() => (appState = 'menu')} padding="icon">
+	<Button class="m-2 w-8" onClick={() => (gameState.value = 'menu')} padding="icon">
 		<XIcon strokeWidth={4} />
 	</Button>
 </div>

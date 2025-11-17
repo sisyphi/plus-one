@@ -1,14 +1,13 @@
 <script lang="ts">
-	import type { GameState } from '$lib/utils/helper';
+	import { gameState } from '$lib/stores/GameState.svelte';
 	import { Calendar1Icon } from '@lucide/svelte';
 	import { Button, Typography, Divider, cn } from 'imbento-box-ui';
 
 	interface MenuPageProps {
-		appState: GameState;
-		loading: boolean;
+		loading?: boolean;
 	}
 
-	let { appState = $bindable(), loading }: MenuPageProps = $props();
+	let { loading }: MenuPageProps = $props();
 </script>
 
 <Button
@@ -17,7 +16,7 @@
 		loading && '**:text-black'
 	)}
 	size="medium"
-	onClick={() => (appState = 'game')}
+	onClick={() => (gameState.value = 'game')}
 	align="left"
 	disabled={loading}
 >
@@ -30,7 +29,7 @@
 <Button
 	class="px-8 py-4 hover:bg-black hover:**:text-white"
 	size="medium"
-	onClick={() => (appState = 'guide')}
+	onClick={() => (gameState.value = 'guide')}
 	align="left"
 >
 	<Typography>how to play?</Typography>

@@ -2,6 +2,7 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { Background, ContentContainer, Header, MainContainer } from 'imbento-box-ui';
+	import { gameState } from '$lib/stores/GameState.svelte';
 
 	let { children } = $props();
 </script>
@@ -12,7 +13,9 @@
 
 <MainContainer>
 	<Background pattern="stagStar" color="blue" animate={false} />
-	<Header>Plus One</Header>
+	<Header>
+		<button onclick={() => (gameState.value = 'menu')}>Plus One</button>
+	</Header>
 	<ContentContainer>
 		{@render children?.()}
 	</ContentContainer>

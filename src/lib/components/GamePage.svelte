@@ -1,18 +1,12 @@
 <script lang="ts">
 	import { Divider, Button, Typography, cn, HighlightText } from 'imbento-box-ui';
 	import GuessInput from './GuessInput.svelte';
-	import {
-		containsAllLetters,
-		validateGuess,
-		wordToSignature,
-		type GameState
-	} from '$lib/utils/helper';
+	import { containsAllLetters, validateGuess } from '$lib/utils/helper';
 	import type { Graph } from '$lib/types/Graph';
 	import WordList from './WordList.svelte';
 	import { ChevronDownIcon, ChevronUpIcon } from '@lucide/svelte';
 
 	interface GamePageProps {
-		appState: GameState;
 		guess: string;
 		answers: string[];
 		validationGraph: Graph<string[]>;
@@ -21,7 +15,6 @@
 	}
 
 	let {
-		appState = $bindable(),
 		guess = $bindable(),
 		answers = $bindable(),
 		selectedIdx = $bindable(),

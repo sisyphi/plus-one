@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { getDailyWordData, saveTimezone } from './api';
 	import { Graph } from '$lib/types/Graph';
 	import { onMount } from 'svelte';
-	import { getUserTimezone } from '$lib/utils/datetime';
 	import {
 		EMPTY_PLAYER_DATA,
 		getPlayerData,
@@ -13,19 +11,19 @@
 	import GamePage from '$lib/components/GamePage.svelte';
 	import SuccessPage from '$lib/components/SuccessPage.svelte';
 	import GuidePage from '$lib/components/GuidePage.svelte';
-	import type { GameState } from '$lib/utils/helper';
+	import { gameState } from '$lib/stores/GameState.svelte';
+	import type { PageProps } from './$types';
 
-	let currState: GameState = $state('menu');
+	let { data }: PageProps = $props();
 
-	let dailyWord: string = '';
-	let dailyGraph: Graph<string[]> = $state(new Graph<string[]>());
+	let dailyWord = data.dailyWord;
+	let dailyGraph: Graph<string[]> = $state(Graph.fromJSON(data.dailyGraph));
+
 	let guess: string = $state('');
 	let answers: string[] = $state([]);
 	let selectedIdx: number = $state(0);
 	let playerData: PlayerData = $state(EMPTY_PLAYER_DATA);
-	let timeZone: string;
 	let currScore: number = $state(0);
-	let loading = $state(true);
 
 	function handleReset() {
 		answers = [];
@@ -42,37 +40,28 @@
 		handleReset();
 
 		playerData = getPlayerData();
-		currState = 'success';
+		gameState.value = 'success';
 	}
 
 	onMount(async () => {
-		timeZone = getUserTimezone();
-		await saveTimezone(timeZone);
-
-		const { word, graph } = await getDailyWordData();
-		dailyWord = word;
-		dailyGraph = graph;
-
 		playerData = getPlayerData();
 
 		handleReset();
-		loading = false;
 	});
 </script>
 
-{#if currState === 'menu'}
-	<MenuPage bind:appState={currState} loading={false} />
-{:else if currState === 'game'}
+{#if gameState.value === 'menu'}
+	<MenuPage />
+{:else if gameState.value === 'game'}
 	<GamePage
-		bind:appState={currState}
 		bind:guess
 		bind:answers
 		bind:selectedIdx
 		validationGraph={dailyGraph}
 		{handleGameSubmit}
 	/>
-{:else if currState === 'success'}
-	<SuccessPage bind:appState={currState} {playerData} score={currScore} />
-{:else if currState === 'guide'}
-	<GuidePage bind:appState={currState} />
+{:else if gameState.value === 'success'}
+	<SuccessPage {playerData} score={currScore} />
+{:else if gameState.value === 'guide'}
+	<GuidePage />
 {/if}

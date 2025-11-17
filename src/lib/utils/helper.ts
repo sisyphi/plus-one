@@ -6,8 +6,6 @@ export type WordData = {
 	};
 };
 
-export type GameState = 'menu' | 'game' | 'success' | 'guide';
-
 export function leadingZero(num: number, size: number): string {
 	return String(num).padStart(size, '0');
 }
@@ -85,4 +83,14 @@ export function validateGuess(guess: string, prevAnswer: string, graph: Graph<st
 	if (guessData !== undefined && !guessData.includes(guess)) return false;
 
 	return true;
+}
+
+export async function loadStaticFile(filename: string, ext: string): Promise<any> {
+	const res = await fetch(`/data/${filename}.${ext}`);
+	switch (ext) {
+		case 'json':
+			return await res.json();
+		case 'txt':
+			return (await res.text()).replaceAll('\r', '').split('\n');
+	}
 }

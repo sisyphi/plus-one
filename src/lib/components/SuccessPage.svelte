@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { leadingZero, type GameState } from '$lib/utils/helper';
+	import { leadingZero } from '$lib/utils/helper';
 	import type { PlayerData } from '$lib/utils/playerData';
 	import { Button, Divider, Typography } from 'imbento-box-ui';
 	import ScoreDistribution from './ScoreDistribution.svelte';
+	import { gameState } from '$lib/stores/GameState.svelte';
 
 	interface SuccessPageProps {
-		appState: GameState;
 		playerData: PlayerData;
 		score: number;
 	}
 
-	let { appState = $bindable(), playerData, score }: SuccessPageProps = $props();
+	let { playerData, score }: SuccessPageProps = $props();
 
 	let { currStreak, bestStreak, lastScore } = $derived(playerData);
 
@@ -82,7 +82,7 @@
 	<Typography>share!</Typography>
 </Button>
 <Divider axis="horizontal" />
-<Button onClick={() => (appState = 'menu')}>
+<Button onClick={() => (gameState.value = 'menu')}>
 	<Typography>back to menu</Typography>
 </Button>
 <Divider axis="horizontal" />
